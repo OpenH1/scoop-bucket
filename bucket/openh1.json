@@ -1,0 +1,80 @@
+{
+    "version": "369",
+    "description": "Halo: Combat Evolved, recompiled from the decompiled Xbox game (needs your own Xbox disc image)",
+    "homepage": "https://openh1.com",
+    "license": "AGPL-3.0-or-later",
+    "notes": [
+        "OpenH1 needs your own Xbox disc image of Halo: Combat Evolved: at its first start the game asks for it",
+        "and copies its maps folder out of it (about 2 GB). See https://openh1.com.",
+        "Your settings, maps, Custom Edition maps, mods and screenshots are kept in $persist_dir;",
+        "saved games are in %APPDATA%\\halo. Scoop updates the game (scoop update openh1),",
+        "so its own updater is off (update.auto = false in config.toml)."
+    ],
+    "url": "https://github.com/OpenH1/OpenH1/releases/download/build-369/OpenH1-Windows.zip",
+    "hash": "fee6b40ee2677f40841b4f50bd36ed46dde3fe165001636bac406e9ae8c95b35",
+    "pre_install": [
+        "# Scoop updates the game, so it does not update itself (the game's update.auto)",
+        "if (!(Test-Path -LiteralPath \"$persist_dir\\config.toml\")) {",
+        "    Set-Content -LiteralPath \"$dir\\config.toml\" -Encoding Ascii -Value @('[update]', '# Scoop updates OpenH1 (scoop update openh1), so the game does not update itself.', 'auto = false')",
+        "}",
+        "# (persisted files must exist before they are persisted, or Scoop makes them folders)",
+        "'bans.txt', 'cheaters.txt', 'text_filter.txt' | ForEach-Object {",
+        "    if (!(Test-Path -LiteralPath \"$persist_dir\\$_\")) { New-Item -ItemType File -Path \"$dir\\$_\" -Force | Out-Null }",
+        "}"
+    ],
+    "post_install": [
+        "# No maps kept yet: the empty maps folder Scoop made would stop the game's first start from offering",
+        "# to copy them out of the disc image, so it is taken away; pre_uninstall keeps the folder the game makes.",
+        "$maps = \"$dir\\maps\"",
+        "$kept = \"$persist_dir\\maps\"",
+        "if ((Get-Item -LiteralPath $maps -Force -ErrorAction SilentlyContinue).LinkType -and !(Get-ChildItem -LiteralPath $kept -Force -ErrorAction SilentlyContinue)) {",
+        "    attrib -R /L $maps",
+        "    [System.IO.Directory]::Delete($maps)",
+        "    [System.IO.Directory]::Delete($kept)",
+        "}"
+    ],
+    "pre_uninstall": [
+        "# The maps folder the game copied out of the disc image, kept with the player's other files",
+        "# before an update or an uninstall (the next version links it back in)",
+        "$maps = \"$dir\\maps\"",
+        "$kept = \"$persist_dir\\maps\"",
+        "$item = Get-Item -LiteralPath $maps -Force -ErrorAction SilentlyContinue",
+        "if ($item -and !$item.LinkType) {",
+        "    if ((Test-Path -LiteralPath $kept) -and !(Get-ChildItem -LiteralPath $kept -Force)) { [System.IO.Directory]::Delete($kept) }",
+        "    if (!(Test-Path -LiteralPath $kept)) {",
+        "        New-Item -ItemType Directory -Path $persist_dir -Force | Out-Null",
+        "        Move-Item -LiteralPath $maps -Destination $kept",
+        "    }",
+        "}"
+    ],
+    "bin": [
+        [
+            "halo.exe",
+            "openh1"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "halo.exe",
+            "OpenH1"
+        ]
+    ],
+    "persist": [
+        "config.toml",
+        "maps",
+        "custom_maps",
+        "mods",
+        "screenshots",
+        "crashes",
+        "bans.txt",
+        "cheaters.txt",
+        "text_filter.txt"
+    ],
+    "checkver": {
+        "github": "https://github.com/OpenH1/OpenH1",
+        "regex": "build-(\\d+)"
+    },
+    "autoupdate": {
+        "url": "https://github.com/OpenH1/OpenH1/releases/download/build-$version/OpenH1-Windows.zip"
+    }
+}
