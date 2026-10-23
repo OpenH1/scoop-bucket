@@ -38,8 +38,9 @@ jobs:
           }
           $app = "$env:USERPROFILE\scoop\apps\openh1\current"
           $kept = "$env:USERPROFILE\scoop\persist\openh1"
-          scoop bucket add openh1 $env:GITHUB_WORKSPACE
-          scoop install openh1
+          # (this checkout's manifest, which scoop update and install then use)
+          $manifest = "$env:GITHUB_WORKSPACE\bucket\openh1.json"
+          scoop install $manifest
           Check 'halo.exe installed' (Test-Path "$app\halo.exe")
           Check 'config.toml turns off the game''s updater' ((Get-Content "$app\config.toml" -Raw) -match '(?m)^auto = false')
           Check 'config.toml persisted (hard link)' ((Get-Item "$app\config.toml").LinkType -eq 'HardLink')
@@ -63,6 +64,6 @@ jobs:
           Check 'maps kept after uninstall' (Test-Path "$kept\maps\ui.map")
           Check 'config.toml kept after uninstall' (Test-Path "$kept\config.toml")
 
-          scoop install openh1
+          scoop install $manifest
           Check 'maps linked again' (Test-Path "$app\maps\ui.map")
           Check 'config.toml as the player left it' ((Get-Content "$app\config.toml" -Raw) -match 'fullscreen = false')
