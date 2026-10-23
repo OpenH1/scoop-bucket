@@ -43,6 +43,8 @@ asks for it and copies its `maps` folder out of it (about 2 GB). Refer to
 
 [Excavator](.github/workflows/excavator.yml) runs Scoop's `checkver` and
 autoupdate every 6 hours: a new release (`build-<N>`) becomes the manifest's
-version, with its hash.
+version, with its hash. [Install](.github/workflows/install.yml) installs,
+updates and uninstalls the manifest with Scoop on Windows and checks what it
+keeps.
 
 The manifest is under the game's licence, AGPL-3.0-or-later.

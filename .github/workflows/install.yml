@@ -1,0 +1,68 @@
+name: Install
+
+# The manifest installed, updated, uninstalled and installed again with
+# Scoop, checking what it keeps: config.toml (with update.auto = false), the
+# persisted folders, and the maps folder the game makes at its first start
+# (stood in for here by a folder with a ui.map).
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    name: Install
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install Scoop
+        run: |
+          Invoke-Expression "& {$(Invoke-RestMethod https://get.scoop.sh)} -RunAsAdmin"
+          Join-Path $env:USERPROFILE 'scoop\shims' >> $env:GITHUB_PATH
+      - name: Install, update, uninstall and install again
+        run: |
+          $ErrorActionPreference = 'Stop'
+          function Check($what, $ok) {
+              if (!$ok) { throw "failed: $what" }
+              Write-Host "ok: $what"
+          }
+          $app = "$env:USERPROFILE\scoop\apps\openh1\current"
+          $kept = "$env:USERPROFILE\scoop\persist\openh1"
+          scoop bucket add openh1 $env:GITHUB_WORKSPACE
+          scoop install openh1
+          Check 'halo.exe installed' (Test-Path "$app\halo.exe")
+          Check 'config.toml turns off the game''s updater' ((Get-Content "$app\config.toml" -Raw) -match '(?m)^auto = false')
+          Check 'config.toml persisted (hard link)' ((Get-Item "$app\config.toml").LinkType -eq 'HardLink')
+          Check 'bans.txt persisted as a file' ((Test-Path "$kept\bans.txt" -PathType Leaf))
+          Check 'custom_maps persisted (junction)' ((Get-Item "$app\custom_maps").LinkType -eq 'Junction')
+          Check 'no empty maps folder before the game makes one' (!(Test-Path "$app\maps") -and !(Test-Path "$kept\maps"))
+          Check 'Start menu shortcut' (Test-Path "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Scoop Apps\OpenH1.lnk")
+          Check 'openh1 command' ($null -ne (Get-Command openh1 -ErrorAction SilentlyContinue))
+
+          # the game's first start: its maps folder, and a setting changed
+          New-Item -ItemType Directory "$app\maps" | Out-Null
+          Set-Content "$app\maps\ui.map" 'stand-in'
+          Add-Content "$app\config.toml" "`r`n[display]`r`nfullscreen = false"
+
+          scoop update openh1 --force
+          Check 'maps moved into persist on update' (Test-Path "$kept\maps\ui.map")
+          Check 'maps linked into the new version' ((Get-Item "$app\maps").LinkType -eq 'Junction' -and (Test-Path "$app\maps\ui.map"))
+          Check 'config.toml kept on update' ((Get-Content "$app\config.toml" -Raw) -match 'fullscreen = false')
+
+          scoop uninstall openh1
+          Check 'maps kept after uninstall' (Test-Path "$kept\maps\ui.map")
+          Check 'config.toml kept after uninstall' (Test-Path "$kept\config.toml")
+
+          scoop install openh1
+          Check 'maps linked again' (Test-Path "$app\maps\ui.map")
+          Check 'config.toml as the player left it' ((Get-Content "$app\config.toml" -Raw) -match 'fullscreen = false')
