@@ -1,5 +1,5 @@
 {
-    "version": "736",
+    "version": "747",
     "description": "Halo: Combat Evolved, recompiled from the decompiled Xbox game (needs your own Xbox disc image)",
     "homepage": "https://openh1.com",
     "license": "AGPL-3.0-or-later",
@@ -10,8 +10,8 @@
         "saved games are in %APPDATA%\\halo. Scoop updates the game (scoop update openh1),",
         "so its own updater is off (update.auto = false in config.toml)."
     ],
-    "url": "https://github.com/OpenH1/OpenH1/releases/download/build-736/OpenH1-Windows.zip",
-    "hash": "eef0e3298ca87fdcf9e2c3ca1efd3de4475e4db129d26e62e7667c9d03e22db0",
+    "url": "https://github.com/OpenH1/OpenH1/releases/download/build-747/OpenH1-Windows.zip",
+    "hash": "3c032ae41770cf338103b034e768b89c5fa0d96dc75e02eee4551953aa22bc6a",
     "pre_install": [
         "# Scoop updates the game, so it does not update itself (the game's update.auto)",
         "if (!(Test-Path -LiteralPath \"$persist_dir\\config.toml\")) {",
