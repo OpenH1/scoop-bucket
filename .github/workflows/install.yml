@@ -47,7 +47,7 @@ jobs:
           Check 'bans.txt persisted as a file' ((Test-Path "$kept\bans.txt" -PathType Leaf))
           Check 'custom_maps persisted (junction)' ((Get-Item "$app\custom_maps").LinkType -eq 'Junction')
           Check 'no empty maps folder before the game makes one' (!(Test-Path "$app\maps") -and !(Test-Path "$kept\maps"))
-          Check 'Start menu shortcut' (Test-Path "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Scoop Apps\OpenH1.lnk")
+          Check 'Start menu shortcut' (Test-Path "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Scoop Apps\GOAT H1.lnk")
           Check 'openh1 command' ($null -ne (Get-Command openh1 -ErrorAction SilentlyContinue))
 
           # the game's first start: its maps folder, and a setting changed
@@ -59,6 +59,7 @@ jobs:
           Check 'maps moved into persist on update' (Test-Path "$kept\maps\ui.map")
           Check 'maps linked into the new version' ((Get-Item "$app\maps").LinkType -eq 'Junction' -and (Test-Path "$app\maps\ui.map"))
           Check 'config.toml kept on update' ((Get-Content "$app\config.toml" -Raw) -match 'fullscreen = false')
+          Check 'Start menu shortcut kept on update' (Test-Path "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Scoop Apps\GOAT H1.lnk")
 
           scoop uninstall openh1
           Check 'maps kept after uninstall' (Test-Path "$kept\maps\ui.map")
