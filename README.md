@@ -1,8 +1,8 @@
 # OpenH1 for Scoop
 
-A [Scoop](https://scoop.sh) bucket for [OpenH1](https://openh1.com), Halo:
+A [Scoop](https://scoop.sh) bucket for [GOAT H1](https://goath1.com) (formerly OpenH1), Halo:
 Combat Evolved recompiled from the decompiled Xbox game
-([OpenH1/OpenH1](https://github.com/OpenH1/OpenH1)).
+([OpenH1/goath1](https://github.com/OpenH1/goath1)).
 
 ```powershell
 scoop bucket add openh1 https://github.com/OpenH1/scoop-bucket
@@ -37,7 +37,7 @@ against the hash in [bucket/openh1.json](bucket/openh1.json).
 OpenH1 does not include the game. You need your own Xbox disc image
 (`.iso` or `.xiso`) of Halo: Combat Evolved: at the first start the game
 asks for it and copies its `maps` folder out of it (about 2 GB). Refer to
-[openh1.com](https://openh1.com).
+[goath1.com](https://goath1.com).
 
 ## Updates of the bucket
 
