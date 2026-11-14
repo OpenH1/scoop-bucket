@@ -1,5 +1,5 @@
 {
-    "version": "2289",
+    "version": "2473",
     "description": "Halo: Combat Evolved, recompiled from the decompiled Xbox game (needs your own Xbox disc image)",
     "homepage": "https://goath1.com",
     "license": "AGPL-3.0-or-later",
@@ -10,8 +10,8 @@
         "saved games are in %APPDATA%\\halo. Scoop updates the game (scoop update openh1),",
         "so its own updater is off (update.auto = false in config.toml)."
     ],
-    "url": "https://github.com/OpenH1/goath1/releases/download/build-2289/OpenH1-Windows.zip",
-    "hash": "bcc269a9d337fa9eff10462592b6f1c828d5eff7ffcc94794df6bb2bdbee2a2d",
+    "url": "https://github.com/OpenH1/goath1/releases/download/build-2473/OpenH1-Windows.zip",
+    "hash": "dded70fc6b2d006c6759b5b86f48709fa994787eb89b0494f29200c8c551f387",
     "pre_install": [
         "# Scoop updates the game, so it does not update itself (the game's update.auto)",
         "if (!(Test-Path -LiteralPath \"$persist_dir\\config.toml\")) {",
